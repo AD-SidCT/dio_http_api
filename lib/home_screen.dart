@@ -1,3 +1,4 @@
+import 'package:dio_ui/http_login.dart';
 import 'package:dio_ui/login_page.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +14,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login Screen'),
+        title: Center(child: const Text(' Api Home Screen')),
       ),
       body: Center(
         child: Column(
@@ -25,7 +26,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 50,
                 width: 180,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        // ignore: prefer_const_constructors
+                        builder: (context) => HttpLoginPage(),
+                      ),
+                    );
+                  },
                   style: ButtonStyle(
                       shape: MaterialStatePropertyAll(RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)))),
@@ -67,12 +76,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-// void fetchData() async {
-//   final dio = Dio();
-//   // final response = await dio.post("http://jasonplaceholder.tpicode.com/posts",
-//   //     data: {"Name": "ABCDEFG", "Email": "abc@gmail.com", "Address": "Surat"});
-//   final response = await dio.post('https://jsonplaceholder.typicode.com/posts');
-//   print(response.statusCode);
-//   print(response.data.toString());
-// }

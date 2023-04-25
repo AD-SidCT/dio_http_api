@@ -3,14 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class DataStoreScreen extends StatefulWidget {
+class HttpDataStoreScreen extends StatefulWidget {
   final token;
-  const DataStoreScreen({Key? key, this.token}) : super(key: key);
+  const HttpDataStoreScreen({Key? key, this.token}) : super(key: key);
   @override
-  State<DataStoreScreen> createState() => _DataStoreScreenState();
+  State<HttpDataStoreScreen> createState() => _HttpDataStoreScreenState();
 }
 
-class _DataStoreScreenState extends State<DataStoreScreen> {
+class _HttpDataStoreScreenState extends State<HttpDataStoreScreen> {
   bool getData = false;
   Future<void> detchData() async {
     setState(() {
@@ -35,7 +35,7 @@ class _DataStoreScreenState extends State<DataStoreScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dio Stored Data'),
+        title: const Text('Http Stored Data'),
       ),
       body: FutureBuilder(
         future: detchData(),

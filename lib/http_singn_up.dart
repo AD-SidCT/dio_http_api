@@ -1,16 +1,18 @@
-import 'package:dio/dio.dart';
-import 'package:dio_ui/login_page.dart';
+import 'dart:convert';
+
+import 'package:dio_ui/http_login.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 
-class SignUpPage extends StatefulWidget {
-  const SignUpPage({Key? key}) : super(key: key);
+class HttpSignUpPage extends StatefulWidget {
+  const HttpSignUpPage({Key? key}) : super(key: key);
 
   @override
-  State<SignUpPage> createState() => _SignUpPageState();
+  State<HttpSignUpPage> createState() => _HttpSignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _HttpSignUpPageState extends State<HttpSignUpPage> {
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final firstNameController = TextEditingController();
@@ -20,20 +22,24 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<void> fetchRegisterData() async {
     try {
-      Response url = await Dio().post(
-        ('https://spv-dev.dkv.global:8000/api/user/register/'),
-        options: Options(headers: {'Content-Type': 'application/json'}),
-        data: {
+      final url =
+          Uri.parse('https://spv-dev.dkv.global:8000/api/user/register/');
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
           'email': emailController.text,
           'first_name': firstNameController.text,
           'last_name': lastNameController.text,
           'password': passwordController.text,
-        },
+        }),
       );
-      print(url.statusCode.toString());
-      print(url.statusCode);
-      if (url.statusCode == 201) {
-        final responseBody = (url.data);
+      print(response.statusCode.toString());
+      print(response.statusCode);
+      if (response.statusCode == 201) {
+        final responseBody = jsonDecode(response.body);
         final token = responseBody['msg'];
         print('success token $token');
         Fluttertoast.showToast(msg: 'Successfully logged in');
@@ -48,7 +54,7 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Dio Sign Up Screen')),
+      appBar: AppBar(title: const Text('Http Sign Up Screen')),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -138,7 +144,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 context,
                                 MaterialPageRoute(
                                   // ignore: prefer_const_constructors
-                                  builder: (context) => LoginPage(),
+                                  builder: (context) => HttpLoginPage(),
                                 ),
                               );
                               fetchRegisterData();
@@ -149,7 +155,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                         borderRadius:
                                             BorderRadius.circular(8)))),
                             child: const Text(
-                              'Try Dio Login',
+                              'Try Http Login',
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w700),
                             ),

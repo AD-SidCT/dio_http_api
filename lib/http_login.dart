@@ -1,17 +1,19 @@
-import 'package:dio/dio.dart';
-import 'package:dio_ui/data_stored.dart';
-import 'package:dio_ui/sign_up.dart';
+import 'dart:convert';
+
+import 'package:dio_ui/http_data_store.dart';
+import 'package:dio_ui/http_singn_up.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class HttpLoginPage extends StatefulWidget {
+  const HttpLoginPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<HttpLoginPage> createState() => _HttpLoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _HttpLoginPageState extends State<HttpLoginPage> {
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -19,31 +21,30 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> fetchData() async {
     try {
-      Response url = await Dio().post(
-        ('https://spv-dev.dkv.global:8000/api/user/login/'),
-        options: Options(headers: {'Content-Type': 'application/json'}),
-        data: {
+      final response = await http.post(
+        Uri.parse('https://spv-dev.dkv.global:8000/api/user/login/'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
           'email': emailController.text,
           'password': passwordController.text,
-        },
+        }),
       );
-      print(url.statusCode.toString());
-      print(url.statusCode);
-      if (url.statusCode == 201) {
-        final responseBody = (url.data);
+
+      if (response.statusCode == 201) {
+        final responseBody = json.decode(response.body);
         final token = responseBody['token']['access'];
         print('success token $token');
         Fluttertoast.showToast(
           msg: 'Successfully logged in',
         );
         Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DataStoreScreen(
-                token: token,
-              ),
-            ));
-        // as the tost msg was not working so i included this
+          context,
+          MaterialPageRoute(
+            builder: (context) => HttpDataStoreScreen(
+              token: token,
+            ),
+          ),
+        );
       } else {
         print("Failed");
       }
@@ -59,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dio Login Screen'),
+        title: const Text('HTTP Login Screen'),
       ),
       body: Form(
         key: _formKey,
@@ -103,14 +104,14 @@ class _LoginPageState extends State<LoginPage> {
                           fetchData();
                         },
                         style: ButtonStyle(
-                          shape: MaterialStatePropertyAll(
+                          shape: MaterialStateProperty.all(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                         ),
                         child: const Text(
-                          'Login in',
+                          'Http Login in',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w700),
                         ),
@@ -127,12 +128,12 @@ class _LoginPageState extends State<LoginPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const SignUpPage(),
+                              builder: (context) => const HttpSignUpPage(),
                             ),
                           );
                         },
                         style: ButtonStyle(
-                            shape: MaterialStatePropertyAll(
+                            shape: MaterialStateProperty.all(
                                 RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8)))),
                         child: const Text(
