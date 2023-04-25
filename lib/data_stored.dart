@@ -64,7 +64,7 @@ class _DataStoreScreenState extends State<DataStoreScreen> {
           } else if (snapshot.hasError) {
             print('has Error');
             return const Center(
-              child: Text('Something Wrong'),
+              child: Text('Something went Wrong'),
             );
           } else {
             // return a widget when there's no data yet
